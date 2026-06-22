@@ -14,9 +14,16 @@ import IconButton from '@mui/material/IconButton'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import Typography from '@mui/material/Typography'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
 
 export default function ClientList() {
   const [clients, setClients] = useState([])
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [selectedId, setSelectedId] = useState(null)
   const navigate = useNavigate()
 
   const fetchClients = () => {
@@ -27,10 +34,21 @@ export default function ClientList() {
     fetchClients()
   }, [])
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this client?')) return
-    await axios.delete(`/api/clients/${id}`)
+  const handleDeleteClick = (id) => {
+    setSelectedId(id)
+    setConfirmOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    await axios.delete(`/api/clients/${selectedId}`)
+    setConfirmOpen(false)
+    setSelectedId(null)
     fetchClients()
+  }
+
+  const handleCancelDelete = () => {
+    setConfirmOpen(false)
+    setSelectedId(null)
   }
 
   return (
@@ -72,7 +90,7 @@ export default function ClientList() {
                   </IconButton>
                   <IconButton
                     color="error"
-                    onClick={() => handleDelete(client.id)}
+                    onClick={() => handleDeleteClick(client.id)}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -89,6 +107,20 @@ export default function ClientList() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Dialog open={confirmOpen} onClose={handleCancelDelete}>
+        <DialogTitle>The Application Says</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this client? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete}>Cancel</Button>
+          <Button onClick={handleConfirmDelete} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }
