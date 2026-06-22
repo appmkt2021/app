@@ -6,7 +6,7 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 from pydantic import BaseModel
 from typing import Optional
 
-# --- Database setupp ---
+# --- Database setup ---
 DB_DIR = os.path.join(os.path.dirname(__file__), "db")
 os.makedirs(DB_DIR, exist_ok=True)
 DATABASE_URL = f"sqlite:///{os.path.join(DB_DIR, 'clients.db')}"
