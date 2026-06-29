@@ -6,12 +6,10 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 from pydantic import BaseModel
 from typing import Optional
 
-# --- Database setup - DB APP II---
-DB_DIR = os.path.join(os.path.dirname(__file__), "db")
-os.makedirs(DB_DIR, exist_ok=True)
-DATABASE_URL = f"sqlite:///{os.path.join(DB_DIR, 'clients.db')}"
+# --- Database setup ---
+DATABASE_URL = os.environ["DATABASE_URL"]
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
